@@ -1,0 +1,29 @@
+import sqlite3
+
+# izveidojam savienojumu ar datu bāzi
+conn = sqlite3.connect('uznemuma_dati.db')
+
+# izveidojam tabulu 'finanses'
+conn.execute('''CREATE TABLE IF NOT EXISTS finanses
+                (ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                ienakumi REAL,
+                nodokli REAL,
+                pelna REAL);''')
+
+# saņemam ievadi no lietotāja
+ienakumi = float(input("Ievadiet uznēmuma ienākumus: "))
+nodoklu_procenti = float(input("Ievadiet nodokļu procentus: "))
+
+# aprēķinām nodokļus un peļņu
+nodokli = ienakumi * nodoklu_procenti / 100
+pelnas = ienakumi - nodokli
+
+# ievietojam ievadītos datus datu bāzē
+conn.execute("INSERT INTO finanses (ienakumi, nodokli, pelna) \
+              VALUES (?, ?, ?)", (ienakumi, nodokli, pelnas))
+conn.commit()
+
+print("Dati ir veiksmīgi saglabāti datu bāzē!")
+
+# aizveram savienojumu ar datu bāzi
+conn.close()
